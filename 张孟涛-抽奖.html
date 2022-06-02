@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .draw_page {
+            width: 500px;
+            height: 100%;
+            background: #ccc;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .draw_box {
+            background: #fff;
+            width: 100%;
+            height: 200px;
+            position: relative;
+        }
+
+        .draw_button {
+            border: none;
+            width: 100px;
+            height: 100px;
+            background: orange;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .name_list_box {
+            overflow-y: auto;
+            position: absolute;
+            top: 200px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .name_item {
+            background: #fff;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="draw_page">
+
+        <div class="draw_box">
+            <button id="drawButton" class="draw_button">
+                抽奖
+            </button>
+
+        </div>
+
+        <div id="nameListBox" class="name_list_box">
+
+        </div>
+
+    </div>
+
+    <!-- 前端工程师笔试题
+    - 写出一个抽奖页面:
+    - 有200个人参加抽奖，每次抽出一个人，不能重复，必须每个人都要抽中奖
+    - 前面10次抽奖要选中固定的10个人，每次就从这10人中随机抽取一人，不能重复
+    - 从第11次开始就从剩余的190人当中抽奖，不能重复，直到抽奖结束
+    - 已经中过奖的人不能再次抽奖  -->
+    <script>
+        import ('./hello.js')
+        let nameAry1 = ["person0", "person1", "person2", "person3", "person4", "person5", "person6", "person7", "person8", "person9",];
+        let nameAry2 = ["person10", "person11", "person12", "person13", "person14", "person15", "person16", "person17", "person18", "person19", "person20", "person21", "person22", "person23", "person24", "person25", "person26", "person27", "person28", "person29", "person30", "person31", "person32", "person33", "person34", "person35", "person36", "person37", "person38", "person39", "person40", "person41", "person42", "person43", "person44", "person45", "person46", "person47", "person48", "person49", "person50", "person51", "person52", "person53", "person54", "person55", "person56", "person57", "person58", "person59", "person60", "person61", "person62", "person63", "person64", "person65", "person66", "person67", "person68", "person69", "person70", "person71", "person72", "person73", "person74", "person75", "person76", "person77", "person78", "person79", "person80", "person81", "person82", "person83", "person84", "person85", "person86", "person87", "person88", "person89", "person90", "person91", "person92", "person93", "person94", "person95", "person96", "person97", "person98", "person99", "person100", "person101", "person102", "person103", "person104", "person105", "person106", "person107", "person108", "person109", "person110", "person111", "person112", "person113", "person114", "person115", "person116", "person117", "person118", "person119", "person120", "person121", "person122", "person123", "person124", "person125", "person126", "person127", "person128", "person129", "person130", "person131", "person132", "person133", "person134", "person135", "person136", "person137", "person138", "person139", "person140", "person141", "person142", "person143", "person144", "person145", "person146", "person147", "person148", "person149", "person150", "person151", "person152", "person153", "person154", "person155", "person156", "person157", "person158", "person159", "person160", "person161", "person162", "person163", "person164", "person165", "person166", "person167", "person168", "person169", "person170", "person171", "person172", "person173", "person174", "person175", "person176", "person177", "person178", "person179", "person180", "person181", "person182", "person183", "person184", "person185", "person186", "person187", "person188", "person189", "person190", "person191", "person192", "person193", "person194", "person195", "person196", "person197", "person198", "person199"];
+        let drawButton = document.getElementById('drawButton');
+        let nameListBox = document.getElementById('nameListBox');
+
+        function bindClick () {
+            let flag = false;
+            let timer;
+            let countDown = 3;
+            return () => {
+                if (!flag) {
+                    flag = true;
+                    drawButton.innerText = countDown--
+                    timer = setInterval(() => {
+                        drawButton.innerText = countDown--
+                        if (countDown < 0) {
+                            drawButton.innerText = '抽奖';
+                            countDown = 3
+                            drawHandle();
+                            clearInterval(timer);
+                            flag = false;
+                        }
+                    }, 1000)
+                }
+            }
+        }
+
+        function drawHandle () {
+            let nameList = nameAry1[0] ? nameAry1 : nameAry2;
+            if (!nameList[0]) {
+                drawButton.innerText = '结束';
+                drawButton.onclick = null;
+                return
+            }
+            let name = nameList.splice(Math.floor(Math.random() * nameList.length), 1);
+            let nameEl = document.createElement('div');
+            nameEl.className = 'name_item';
+            nameEl.innerText = name[0];
+            nameListBox.appendChild(nameEl);
+        }
+        drawButton.onclick = bindClick();
+
+        
+    </script>
+</body>
+
+</html>

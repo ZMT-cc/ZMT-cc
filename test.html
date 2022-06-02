@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let str = 'PAYPALISHIRING'
+
+        function convert (str, numRows) {
+            if (!str || str.length > 2 || numRows === 1) {
+                return str
+            }
+            let ary = []
+            let index = 0
+            let count = 0
+            for (var i = 0; i < str.length; i++) {
+                let aryIndex = index += count
+                ary[aryIndex] = ary[aryIndex] ? ary[aryIndex] += str[i] : str[i]
+                if (index + 1 === numRows) {
+                    count = -1
+                }
+                if (index === 0) {
+                    count = 1
+                }
+            }
+            return ary.join('')
+        }
+
+        function arr_sort (data) {
+            for (var i = 0; i < data.length; i++) {
+                for (var j = 0; j < data.length - i; j++) {
+                    if (data[j] < data[j + 1]) {
+                        let swap = data[j]
+                        data[j] = data[j + 1]
+                        data[j + 1] = swap
+                    }
+                }
+            }
+            return data
+        }
+        let a = arr_sort([546, 54, 5, 1, 48, 12, 54, 45, 3, 21, 5, 7, 8, 5, 1, 23, 684, 8, 4, 6, 2, 5644, 2568])
+        console.log(a)
+
+
+        const data = [{
+            user_name: 'name',
+            user_id: 10000,
+            detail: {
+                user_avatar_url: 'x_xxx',
+                object_one: {
+                    a_num: 1,
+                    str: 'str1'
+                },
+                array_one: [
+                    '2131',
+                    [
+
+                        {
+                            a_num: 111,
+                            b_num: 222
+                        }
+                    ],
+                    [
+                        {
+                            c_obj: {
+                                c_num: 333,
+                                str: 'str3'
+                            }
+
+                        }
+                    ]
+                ]
+            }
+        }]
+        function convertKeysForJson (data) {
+            const reg = /_\w+(?=\"\:)/g
+            let strData = JSON.stringify(data)
+            let strList = strData.match(reg)
+            strList.forEach((item, index) => {
+                item = item.slice(0, 2)
+                strData = strData.replace(item, item[1].toLocaleUpperCase())
+            })
+            return JSON.parse(strData)
+        }
+
+
+
+        let jData = convertKeysForJson(data)
+
+        function convertKeys (data) {
+            if (Object.prototype.toString.call(data) === "[object Object]") {
+                Object.keys(data).forEach((key, index) => {
+                    let newKey = getKey(key)
+                    data[newKey] = data[key]
+                    delete data[key]
+                    if (typeof data[newKey] === "object" && typeof data[newKey] !== null) {
+                        convertKeys(data[newKey])
+                    }
+                })
+            }
+
+            if (Array.isArray(data)) {
+                data.forEach((item) => {
+                    if (typeof item === "object" && typeof item !== null) {
+                        convertKeys(item)
+                    }
+                })
+            }
+        }
+
+
+        function getKey (key) {
+            let reg = /_\w{1}/g
+            let matchList = key.match(reg)
+            if (matchList) {
+                matchList.forEach((item) => {
+                    key = key.replace(item, item[1].toLocaleUpperCase())
+                })
+            }
+            return key
+        }
+
+        convertKeys(data)
+        console.log(data)
+
+        function add () {
+            // 第一次执行时，定义一个数组专门用来存储所有的参数
+            var _args = [...arguments];
+            console.log(_args)
+
+            // 在内部声明一个函数，利用闭包的特性保存_args并收集所有的参数值
+            var _adder = function () {
+                _args.push(...arguments);
+                return _adder;
+            };
+
+            // 利用toString隐式转换的特性，当最后执行时隐式转换，并计算最终的值返回
+            _adder.toString = function () {
+                return _args.reduce(function (a, b) {
+                    return a + b;
+                });
+            }
+            return _adder;
+        }
+
+        // alert(add(1)(2)(3))             // 6
+        add(1, 2, 3)(4)             // 10
+        add(1)(2)(3)(4)(5)          // 15
+        add(2, 6)(1)
+
+
+        function currying (fun, initArgs) {
+            let _this = this;
+            let len = fun.length; // 被改造函数参数的个数
+            let args = initArgs || [];
+
+            return function () {
+                let _args = [...args, ...arguments]; // 参数
+
+                // 如果参数个数小于最初的fun.length，则递归调用，继续收集参数
+                if (_args.length < len) {
+                    return currying.call(_this, fun, _args);
+                }
+
+                // 参数收集完毕，则执行函数，返回结果
+                return fun.apply(this, _args);
+            }
+        }
+
+        // 使用
+        let curryingAdd = currying(function (a, b, c) {
+            return a + b + c
+        })
+
+
+        console.log(curryingAdd(1, 2)(3)) // 6
+        curryingAdd(1)(2)(3) // 6
+        curryingAdd(1, 2, 3) // 6
+        const el = document.createElement('div')
+        el.innerHTML = '<span>132132</span>'
+
+        console.dir(document.body.appendChild(el))
+        const PromiseAll = (iterator) => {
+            const promises = Array.from(iterator); // 对传入的数据进行浅拷贝，确保有遍历器
+            // 每次执行成功+1,当等于长度时，说明所有数据都返回，则可以resolve
+            let data = []; // 用来存放返回的数据数组
+            return new Promise((resolve, reject) => {
+                promises.forEach((item, i) => {
+                    item.then((res) => {
+                        data[i] = res;
+                        if (i === promises.length - 1) {
+                            resolve(data);
+                        }
+                    }).catch((err) => {
+                        reject(err);
+                    })
+
+                })
+            });
+        };
+
+
+        let p1 = Promise.resolve(1231)
+        let p0 = Promise.resolve(1231)
+        let p2 = Promise.reject(123)
+
+
+        // let sss = Promise.all([p1, p0])
+        let sss = PromiseAll([p1, p0, p2])
+
+        sss.catch((ee) => {
+            console.log(ee)
+        })
+
+
+        console.log(sss)
+
+
+    </script>
+</body>
+
+</html>
